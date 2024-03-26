@@ -25,7 +25,7 @@ void drawCircle(GLfloat cx, GLfloat cy, GLfloat r, int num_segments) {
 }
 
 void drawRamp(float x1, float y1, float x2, float y2) {
-    glLineWidth(5); // Define a espessura da linha da rampa
+    glLineWidth(9); // Define a espessura da linha da rampa
     glBegin(GL_LINES);
     glVertex2f(x1, y1);
     glVertex2f(x2, y2);

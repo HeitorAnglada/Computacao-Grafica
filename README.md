@@ -45,3 +45,9 @@ Mesa é uma implementação open-source do OpenGL. Normalmente, está instalada 
 ```sh
 sudo apt install mesa-common-dev
 ```
+8. Build and Run code
+
+```sh
+gcc programa.c -o programa -lglfw -lGLEW -lGL -lm
+./programa
+```
