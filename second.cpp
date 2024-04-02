@@ -1,5 +1,7 @@
-#include <GL/glew.h>
+// #include <GL/glew.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <iostream>
 #include <stdio.h>
 #include <math.h>
 
@@ -52,6 +54,14 @@ int main() {
         fprintf(stderr, "Falha ao inicializar GLEW\n");
         return -1;
     }
+      // glad: load all OpenGL function pointers
+    // ---------------------------------------
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        std::cout << "Failed to initialize GLAD" << std::endl;
+        return -1;
+    }
+
 
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     glMatrixMode(GL_PROJECTION);
@@ -103,7 +113,7 @@ int main() {
           // Detecção de colisão com a rampa
         if (ball.x <= ramp3X2 && ball.x >= ramp3X1 && ball.y - radius <= (ramp3Y2 - ramp3Y1) / (ramp3X2 - ramp3X1) * (ball.x - ramp3X1) + ramp3Y1) {
             ball.vx = 2.0f; // A bola rolará para a direita na rampa
-            ball.vy = -ball.vy * 1; // A velocidade Y é proporcional ao ângulo da rampa
+            ball.vy = -ball.vy * 1.0f; // A velocidade Y é proporcional ao ângulo da rampa
         }
 
           // Detecção de colisão com a rampa
