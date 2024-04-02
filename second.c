@@ -84,7 +84,7 @@ int main() {
         }
 
         // Detecção de colisão com a rampa
-        if (ball.x >= rampX2 && ball.x <= rampX1 && ball.y - radius <= (rampY2 - rampY1) / (rampX2 - rampX1) * (ball.x - rampX1) + rampY1) {
+        if (ball.x >= rampX2 && ball.x <= rampX1 && ball.y - radius >= (rampY2 - rampY1) / (rampX2 - rampX1) * (ball.x - rampX1) + rampY1) {
             ball.vx = 2.0f; // A bola rolará para a direita na rampa
             ball.vy = 0; // A velocidade Y é proporcional ao ângulo da rampa
         }
