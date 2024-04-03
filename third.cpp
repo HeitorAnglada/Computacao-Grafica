@@ -60,7 +60,7 @@ int main() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     while (!glfwWindowShouldClose(window)) {
-
+        
     }
     
 }
