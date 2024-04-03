@@ -64,9 +64,9 @@ int main() {
     const float gravity = -0.1f;
     const float radius = 10.0f; ////// tamanho da bola
     float ramp2X1 = 150, ramp2Y1 = 50, ramp2X2 = 600, ramp2Y2 = 200; // Coordenadas da rampa2
-    float ramp3X1 = 0, ramp3Y1 = 50, ramp3X2 = 50, ramp3Y2 = 0; // Coordenadas da rampa2
+    float ramp3X1 = 0, ramp3Y1 = 100, ramp3X2 = 100, ramp3Y2 = 0; // Coordenadas da rampa2
     float rampX1 = 450, rampY1 = 300, rampX2 = 300, rampY2 = 400; // Coordenadas da rampa
-    float ramp4X1 = 0, ramp4Y1 = 450, ramp4X2 = 300, ramp4Y2 = 420; // Coordenadas da rampa
+    float ramp4X1 = 0, ramp4Y1 = 150, ramp4X2 = 100, ramp4Y2 = 120; // Coordenadas da rampa
 
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);
@@ -84,10 +84,12 @@ int main() {
         }
 
         // Detecção de colisão com a rampa
-        if (ball.x >= rampX2 && ball.x <= rampX1 && ball.y - radius <= (rampY2 - rampY1) / (rampX2 - rampX1) * (ball.x - rampX1) + rampY1) {
+        if (ball.x >= rampX2 && ball.x <= rampX1 && ball.y - radius <= (rampY2 - rampY1) / (rampX2 - rampX1) * (ball.x - rampX1) + rampY1 && ball.y + radius >= (rampY2 - rampY1) / (rampX2 - rampX1) * (ball.x - rampX1) + rampY1) {
             ball.vx = 2.0f; // A bola rolará para a direita na rampa
             ball.vy = 0; // A velocidade Y é proporcional ao ângulo da rampa
         }
+        // printf((rampY2 - rampY1) / (rampX2 - rampX1) * (ball.x - rampX1) + rampY1);
+    
 
          // Detecção de colisão com a rampa
         if (ball.x <= ramp2X2 && ball.x >= ramp2X1 && ball.y - radius <= (ramp2Y2 - ramp2Y1) / (ramp2X2 - ramp2X1) * (ball.x - ramp2X1) + ramp2Y1) {
@@ -95,30 +97,25 @@ int main() {
             ball.vy = -ball.vy * 0.9f; // A velocidade Y é proporcional ao ângulo da rampa
         }
         
-         // Detecção de colisão com a rampa
-        // if (ball.x <= ramp3X2 && ball.x >= ramp3X1 && ball.y - radius <= (ramp3Y2 - ramp3Y1) / (ramp3X2 - ramp3X1) * (ball.x + ramp3X1) + ramp3Y1) {
-        //     ball.vx = 2.0f; // A bola rolará para a direita na rampa
-        //     ball.vy = 0; // A velocidade Y é proporcional ao ângulo da rampa
-        // }
           // Detecção de colisão com a rampa
         if (ball.x <= ramp3X2 && ball.x >= ramp3X1 && ball.y - radius <= (ramp3Y2 - ramp3Y1) / (ramp3X2 - ramp3X1) * (ball.x - ramp3X1) + ramp3Y1) {
             ball.vx = 2.0f; // A bola rolará para a direita na rampa
             ball.vy = -ball.vy * 1; // A velocidade Y é proporcional ao ângulo da rampa
         }
 
-          // Detecção de colisão com a rampa
-        // if (ball.x <= ramp4X2 && ball.x >= ramp4X1 && ball.y - radius <= (ramp4Y2 - ramp4Y1) / (ramp4X2 - ramp4X1) * (ball.x - ramp4X1) + ramp4Y1) {
-        //     ball.vx = 2.0f; // A bola rolará para a direita na rampa
-        //     ball.vy = 0; // A velocidade Y é proporcional ao ângulo da rampa
-        // }
+         // Detecção de colisão com a rampa
+        if (ball.x <= ramp4X2 && ball.x >= ramp4X1 && ball.y - radius <= (ramp4Y2 - ramp4Y1) / (ramp4X2 - ramp4X1) * (ball.x - ramp4X1) + ramp4Y1) {
+            ball.vx = 2.0f; // A bola rolará para a direita na rampa
+            ball.vy = -ball.vy * 0.9f; // A velocidade Y é proporcional ao ângulo da rampa
+        }
 
         // Desenho da bola
         glColor3f(1.0f, 0.0f, 0.0f); // Cor vermelha
         drawCircle(ball.x, ball.y, radius, 32);
 
         //  // Desenho da rampa
-        // glColor3f(0.0f, 1.0f, 0.0f); // Cor verde para a rampa
-        // drawRamp(ramp4X1, ramp4Y1, ramp4X2, ramp4Y2);
+        glColor3f(0.0f, 1.0f, 0.0f); // Cor verde para a rampa
+        drawRamp(ramp4X1, ramp4Y1, ramp4X2, ramp4Y2);
 
         glColor3f(1.0f, 1.0f, 1.0f); // Cor verde para a rampa
         drawRamp(ramp3X1, ramp3Y1, ramp3X2, ramp3Y2);
