@@ -6,9 +6,33 @@
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
+
+/**
+ * Struct to represent a ball.
+ *
+ * This struct is used to represent a ball in a 2D space. It contains
+ * the coordinates (x, y) and the velocity (vx, vy) of the ball.
+ */
 typedef struct {
-    float x, y;
-    float vx, vy;
+    /**
+     * The x coordinate of the ball.
+     */
+    float x;
+
+    /**
+     * The y coordinate of the ball.
+     */
+    float y;
+
+    /**
+     * The x component of the velocity of the ball.
+     */
+    float vx;
+
+    /**
+     * The y component of the velocity of the ball.
+     */
+    float vy;
 } Ball;
 
 void drawCircle(GLfloat cx, GLfloat cy, GLfloat r, int num_segments) {
@@ -47,7 +71,7 @@ int main() {
     }
 
     glfwMakeContextCurrent(window);
-    glewExperimental = GL_TRUE;
+    // glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
         fprintf(stderr, "Falha ao inicializar GLEW\n");
         return -1;
@@ -60,7 +84,7 @@ int main() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    Ball ball = {.x = 30, .y = 600, .vx = 0, .vy = 0};
+    Ball ball = {.x = 150, .y = 600, .vx = 0, .vy = 0};
     const float gravity = -0.1f;
     const float radius = 10.0f; ////// tamanho da bola
     float ramp2X1 = 150, ramp2Y1 = 50, ramp2X2 = 600, ramp2Y2 = 200; // Coordenadas da rampa2
@@ -84,29 +108,46 @@ int main() {
         }
 
         // Detecção de colisão com a rampa
-        if (ball.x >= rampX2 && ball.x <= rampX1 && ball.y - radius <= (rampY2 - rampY1) / (rampX2 - rampX1) * (ball.x - rampX1) + rampY1 && ball.y + radius >= (rampY2 - rampY1) / (rampX2 - rampX1) * (ball.x - rampX1) + rampY1) {
-            ball.vx = 2.0f; // A bola rolará para a direita na rampa
-            ball.vy = 0; // A velocidade Y é proporcional ao ângulo da rampa
+        if (ball.x >= rampX2 && ball.x <= rampX1){
+            if ( ball.y - radius <= (rampY2 - rampY1) / (rampX2 - rampX1) * (ball.x - rampX1) + rampY1 && ball.y + radius ) {
+                if (ball.y + radius >= (rampY2 - rampY1) / (rampX2 - rampX1) * (ball.x - rampX1) + rampY1) {
+                    ball.vx = -2.0f; // A bola rolará para a esquerda na rampa
+                    ball.vy = 0; // A velocidade Y é proporcional ao ángulo da rampa
+                }
+            }
         }
         // printf((rampY2 - rampY1) / (rampX2 - rampX1) * (ball.x - rampX1) + rampY1);
     
 
          // Detecção de colisão com a rampa
-        if (ball.x <= ramp2X2 && ball.x >= ramp2X1 && ball.y - radius <= (ramp2Y2 - ramp2Y1) / (ramp2X2 - ramp2X1) * (ball.x - ramp2X1) + ramp2Y1) {
-            ball.vx = -1.7f; // A bola rolará para a direita na rampa
-            ball.vy = -ball.vy * 0.9f; // A velocidade Y é proporcional ao ângulo da rampa
+        if (ball.x <= ramp2X2 && ball.x >= ramp2X1){
+            if (ball.y - radius <= ((ramp2Y1 - ramp2Y2)/ (ramp2X1 - ramp2X2) * (ball.x - ramp2X1) + ramp2Y1)) {
+                if(ball.y + radius >= ((ramp2Y1 - ramp2Y2)/ (ramp2X1 - ramp2X2) * (ball.x - ramp2X1) + ramp2Y1)){
+                    ball.vx = -1.7f; // A bola rolará para a direita na rampa
+                    ball.vy = -ball.vy * 0.9f; // A velocidade Y é proporcional ao ângulo da rampa
+                }
+                
+            }
         }
         
           // Detecção de colisão com a rampa
-        if (ball.x <= ramp3X2 && ball.x >= ramp3X1 && ball.y - radius <= (ramp3Y2 - ramp3Y1) / (ramp3X2 - ramp3X1) * (ball.x - ramp3X1) + ramp3Y1) {
-            ball.vx = 2.0f; // A bola rolará para a direita na rampa
-            ball.vy = -ball.vy * 1; // A velocidade Y é proporcional ao ângulo da rampa
+        if (ball.x <= ramp3X2 && ball.x >= ramp3X1){
+            if(ball.y - radius <= (ramp3Y2 - ramp3Y1) / (ramp3X2 - ramp3X1) * (ball.x - ramp3X1) + ramp3Y1) {
+                if(ball.y + radius >= (ramp3Y2 - ramp3Y1) / (ramp3X2 - ramp3X1) * (ball.x - ramp3X1) + ramp3Y1){
+                    ball.vx = 2.0f; // A bola rolará para a direita na rampa
+                    ball.vy = -ball.vy * 1; // A velocidade Y é proporcional ao ângulo da rampa
+                }
+            }
         }
 
          // Detecção de colisão com a rampa
-        if (ball.x <= ramp4X2 && ball.x >= ramp4X1 && ball.y - radius <= (ramp4Y2 - ramp4Y1) / (ramp4X2 - ramp4X1) * (ball.x - ramp4X1) + ramp4Y1) {
-            ball.vx = 2.0f; // A bola rolará para a direita na rampa
-            ball.vy = -ball.vy * 0.9f; // A velocidade Y é proporcional ao ângulo da rampa
+        if (ball.x <= ramp4X2 && ball.x >= ramp4X1){
+            if( ball.y - radius <= (ramp4Y2 - ramp4Y1) / (ramp4X2 - ramp4X1) * (ball.x - ramp4X1) + ramp4Y1) {
+                if( ball.y + radius >= (ramp4Y2 - ramp4Y1) / (ramp4X2 - ramp4X1) * (ball.x - ramp4X1) + ramp4Y1){
+                    ball.vx = 2.0f; // A bola rolará para a direita na rampa
+                    ball.vy = -ball.vy * 0.9f; // A velocidade Y é proporcional ao ângulo da rampa
+                }
+            }
         }
 
         // Desenho da bola
