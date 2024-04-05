@@ -1,159 +1,66 @@
-// #include <GL/glew.h>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <iostream>
-#include <stdio.h>
-#include <math.h>
+// This program generates a Sierpinski gasket with 10000 points.
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
+#ifdef __APPLE_CC__
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+#include <cstdlib>
 
-typedef struct {
-    float x, y;
-    float vx, vy;
-} Ball;
+// A simple two-dimensional point class to make life easy.  It allows you to
+// reference points with x and y coordinates instead of array indices) and
+// encapsulates a midpoint function.
+struct Point {
+  GLfloat x, y;
+  Point(GLfloat x = 0, GLfloat y = 0): x(x), y(y) {}
+  Point midpoint(Point p) {return Point((x + p.x) / 2.0, (y + p.y) / 2.0);}
+};
 
-void drawCircle(GLfloat cx, GLfloat cy, GLfloat r, int num_segments) {
-    glBegin(GL_TRIANGLE_FAN);
-    for (int ii = 0; ii < num_segments; ii++) {
-        GLfloat theta = 2.0f * 3.1415926f * (float)ii / (float)num_segments;
+// Draws a Sierpinski triangle with a fixed number of points. (Note that the
+// number of points is kept fairly small because a display callback should
+// NEVER run for too long.
+void display() {
 
-        GLfloat x = r * cosf(theta);
-        GLfloat y = r * sinf(theta);
+  glClear(GL_COLOR_BUFFER_BIT);
 
-        glVertex2f(x + cx, y + cy);
-    }
-    glEnd();
+  static Point vertices[] = {Point(0, 0), Point(200, 500), Point(500, 0)};
+
+  // Compute and plot 100000 new points, starting (arbitrarily) with one of
+  // the vertices. Each point is halfway between the previous point and a
+  // randomly chosen vertex.
+  static Point p = vertices[0];
+  glBegin(GL_POINTS);
+  for (int k = 0; k < 100000; k++) {
+    p = p.midpoint(vertices[rand() % 3]);
+    glVertex2f(p.x, p.y);
+  }
+  glEnd();
+  glFlush();
 }
 
-void drawRamp(float x1, float y1, float x2, float y2) {
-    glLineWidth(9); // Define a espessura da linha da rampa
-    glBegin(GL_LINES);
-    glVertex2f(x1, y1);
-    glVertex2f(x2, y2);
-    glEnd();
+// Performs application-specific initialization. Sets colors and sets up a
+// simple orthographic projection.
+void init() {
+
+  // Set a deep purple background and draw in a greenish yellow.
+  glClearColor(0.25, 0.0, 0.2, 1.0);
+  glColor3f(0.6, 1.0, 0.0);
+
+  // Set up the viewing volume: 500 x 500 x 1 window with origin lower left.
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(0.0, 500.0, 0.0, 500.0, 0.0, 1.0);
 }
 
-int main() {
-    GLFWwindow* window;
-
-    if (!glfwInit()) {
-        fprintf(stderr, "Falha ao inicializar GLFW\n");
-        return -1;
-    }
-
-    window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Rube Goldberg Machine: Bola e Rampa", NULL, NULL);
-    if (!window) {
-        glfwTerminate();
-        return -1;
-    }
-
-    glfwMakeContextCurrent(window);
-    glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK) {
-        fprintf(stderr, "Falha ao inicializar GLEW\n");
-        return -1;
-    }
-      // glad: load all OpenGL function pointers
-    // ---------------------------------------
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        return -1;
-    }
-
-
-    glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT, -1, 1);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    Ball ball = {.x = 30, .y = 600, .vx = 0, .vy = 0};
-    const float gravity = -0.1f;
-    const float radius = 10.0f; ////// tamanho da bola
-    float ramp2X1 = 150, ramp2Y1 = 50, ramp2X2 = 600, ramp2Y2 = 200; // Coordenadas da rampa2
-    float ramp3X1 = 0, ramp3Y1 = 50, ramp3X2 = 50, ramp3Y2 = 0; // Coordenadas da rampa2
-    float rampX1 = 450, rampY1 = 300, rampX2 = 300, rampY2 = 400; // Coordenadas da rampa
-    float ramp4X1 = 0, ramp4Y1 = 450, ramp4X2 = 300, ramp4Y2 = 420; // Coordenadas da rampa
-
-    while (!glfwWindowShouldClose(window)) {
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        // Atualização da física da bola
-        ball.vy += gravity; // Gravidade
-        ball.y += ball.vy; // Atualização da posição Y
-        ball.x += ball.vx; // Atualização da posição X
-
-        // Detecção de colisão com o chão
-        if (ball.y < radius) {
-            ball.y = radius; // Reposiciona a bola para não afundar no chão
-            ball.vy = -ball.vy * 0.7f; // Inverte a velocidade no eixo Y e aplica amortecimento
-            ball.vx = 2.0f; // Aplica uma velocidade inicial no eixo X para a bola rolar
-        }
-
-        // Detecção de colisão com a rampa
-        if (ball.x >= rampX2 && ball.x <= rampX1 && ball.y - radius <= (rampY2 - rampY1) / (rampX2 - rampX1) * (ball.x - rampX1) + rampY1) {
-            ball.vx = 2.0f; // A bola rolará para a direita na rampa
-            ball.vy = 0; // A velocidade Y é proporcional ao ângulo da rampa
-        }
-
-         // Detecção de colisão com a rampa
-        if (ball.x <= ramp2X2 && ball.x >= ramp2X1 && ball.y - radius <= (ramp2Y2 - ramp2Y1) / (ramp2X2 - ramp2X1) * (ball.x - ramp2X1) + ramp2Y1) {
-            ball.vx = -1.7f; // A bola rolará para a direita na rampa
-            ball.vy = -ball.vy * 0.9f; // A velocidade Y é proporcional ao ângulo da rampa
-        }
-        
-         // Detecção de colisão com a rampa
-        // if (ball.x <= ramp3X2 && ball.x >= ramp3X1 && ball.y - radius <= (ramp3Y2 - ramp3Y1) / (ramp3X2 - ramp3X1) * (ball.x + ramp3X1) + ramp3Y1) {
-        //     ball.vx = 2.0f; // A bola rolará para a direita na rampa
-        //     ball.vy = 0; // A velocidade Y é proporcional ao ângulo da rampa
-        // }
-          // Detecção de colisão com a rampa
-        if (ball.x >= ramp3X1 && ball.x <= ramp3X2 && ball.y - radius <= (ramp3Y2 - ramp3Y1) / (ramp3X2 - ramp3X1) * (ball.x - ramp3X1) + ramp3Y1) {
-            ball.vx = 2.0f; // A bola rolará para a direita na rampa
-            ball.vy = -ball.vy * 1.0f; // Inverte a velocidade Y para simular o efeito da inclinação
-        }
-
-        if (ball.x >= ramp3X1 && ball.x <= ramp3X2 && ball.y - radius <= (ramp3Y2 - ramp3Y1) / (ramp3X2 - ramp3X1) * (ball.x - ramp3X1) + ramp3Y1) {
-            ball.vx = 2.0f; // A bola rolará para a direita na rampa
-            ball.vy = -ball.vy * 1.0f; // Inverte a velocidade Y para simular o efeito da inclinação
-        }
-
-
-
-          // Detecção de colisão com a rampa
-        // if (ball.x <= ramp4X2 && ball.x >= ramp4X1 && ball.y - radius <= (ramp4Y2 - ramp4Y1) / (ramp4X2 - ramp4X1) * (ball.x - ramp4X1) + ramp4Y1) {
-        //     ball.vx = 2.0f; // A bola rolará para a direita na rampa
-        //     ball.vy = 0; // A velocidade Y é proporcional ao ângulo da rampa
-        // }
-
-        // Desenho da bola
-        glColor3f(1.0f, 0.0f, 0.0f); // Cor vermelha
-        drawCircle(ball.x, ball.y, radius, 32);
-
-        //  // Desenho da rampa
-        // glColor3f(0.0f, 1.0f, 0.0f); // Cor verde para a rampa
-        // drawRamp(ramp4X1, ramp4Y1, ramp4X2, ramp4Y2);
-
-        glColor3f(1.0f, 1.0f, 1.0f); // Cor verde para a rampa
-        drawRamp(ramp3X1, ramp3Y1, ramp3X2, ramp3Y2);
-
-        // Desenho da rampa
-        glColor3f(0.0f, 1.0f, 0.0f); // Cor verde para a rampa
-        drawRamp(rampX1, rampY1, rampX2, rampY2);
-
-        glColor3f(1.0f, 1.0f, 0.0f); // Cor verde para a rampa
-        drawRamp(ramp2X1, ramp2Y1, ramp2X2, ramp2Y2);
-
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
-    glfwTerminate();
-    // return 0;
-    // gluMainLoop();
-    return 0;
+// Initializes GLUT, the display mode, and main window; registers callbacks;
+// does application initialization; enters the main event loop.
+int main(int argc, char** argv) {
+  glutInit(&argc, argv);
+  glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
+  glutInitWindowSize(500, 500);
+  glutInitWindowPosition(40, 40);
+  glutCreateWindow("Sierpinski Triangle");
+  glutDisplayFunc(display);
+  init();
+  glutMainLoop();
 }
-       
-

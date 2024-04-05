@@ -1,4 +1,4 @@
-#include <GL/glew.h>
+// #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <math.h>
@@ -97,10 +97,10 @@ int main() {
 
     glfwMakeContextCurrent(window);
     // glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK) {
-        fprintf(stderr, "Falha ao inicializar GLEW\n");
-        return -1;
-    }
+    // if (glewInit() != GLEW_OK) {
+    //     fprintf(stderr, "Falha ao inicializar GLEW\n");
+    //     return -1;
+    // }
 
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     glMatrixMode(GL_PROJECTION);
