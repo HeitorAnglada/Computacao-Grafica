@@ -51,3 +51,6 @@ sudo apt install mesa-common-dev
 gcc programa.c -o programa -lglfw -lGLEW -lGL -lm
 ./programa
 ```
+
+# Referrence:
+[Transformations](https://learnopengl.com/Getting-started/Transformations)
