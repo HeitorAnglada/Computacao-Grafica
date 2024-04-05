@@ -80,6 +80,18 @@ int main() {
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+    /*
+     * Set the orthographic projection matrix.
+     * The function glOrtho() sets up a 2D projection matrix,
+     * defining what 2D coordinates map to 3D coordinates.
+     *
+     * @param left The coordinates for the left vertical clipping plane
+     * @param right The coordinates for the right vertical clipping plane
+     * @param bottom The coordinates for the bottom horizontal clipping plane
+     * @param top The coordinates for the top horizontal clipping plane
+     * @param zNear The coordinates for the near depth clipping plane (always -1)
+     * @param zFar The coordinates for the far depth clipping plane (always 1)
+     */
     glOrtho(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -130,7 +142,7 @@ int main() {
             }
         }
         
-          // Detecção de colisão com a rampa
+          // 
         if (ball.x <= ramp3X2 && ball.x >= ramp3X1){
             if(ball.y - radius <= (ramp3Y2 - ramp3Y1) / (ramp3X2 - ramp3X1) * (ball.x - ramp3X1) + ramp3Y1) {
                 if(ball.y + radius >= (ramp3Y2 - ramp3Y1) / (ramp3X2 - ramp3X1) * (ball.x - ramp3X1) + ramp3Y1){
