@@ -45,9 +45,24 @@ Mesa é uma implementação open-source do OpenGL. Normalmente, está instalada 
 ```sh
 sudo apt install mesa-common-dev
 ```
-8. Build and Run code
+8. Build and Run *C* code:
 
 ```sh
 gcc programa.c -o programa -lglfw -lGLEW -lGL -lm
 ./programa
 ```
+
+## Build and Run code:
+
+1.  Gives permission to execute the runCpp.sh file
+```sh
+sudo chmod +x runCpp.sh
+```
+
+2. Runs the C++ code
+```sh
+./runCpp.sh
+```
+
+## Referrence:
+[Transformations](https://learnopengl.com/Getting-started/Transformations)
