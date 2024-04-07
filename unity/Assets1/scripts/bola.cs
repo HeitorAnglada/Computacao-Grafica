@@ -21,7 +21,6 @@ public class bola : MonoBehaviour{
 
     private void Impulsionar(){
 
-        this.fisica.AddForce(Vector2.up*3, ForceMode2D.Impulse);
+        this.fisica.AddForce(Vector2.up*9, ForceMode2D.Impulse);
     }
-
 }
